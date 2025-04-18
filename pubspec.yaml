@@ -1,0 +1,76 @@
+name: secure_share
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  lottie: ^3.1.2
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.10+1
+  google_nav_bar: ^5.0.6
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  bcrypt: ^1.1.3
+  sqflite_common_ffi: ^2.3.0
+  path: ^1.8.3
+  local_auth: ^2.3.0
+  encrypt: ^5.0.1
+  qr_flutter: ^4.0.0
+  pointycastle: ^3.6.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/animations/
+    - assets/images/lock.png
+    - assets/images/
+    - assets/icons/
+  fonts:
+    - family: MonaSans
+      fonts:
+        - asset: assets/fonts/MonaSans.ttf
+        - asset: assets/fonts/MonaSans_italic.ttf
+          style: italic
+    - family: Boldonse
+      fonts:
+        - asset: assets/fonts/Boldonse-Regular.ttf
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
+    - family: WorkSans
+      fonts:
+        - asset: assets/fonts/WorkSans.ttf
+    - family: ubuntuBold
+      fonts:
+        - asset: assets/fonts/Ubuntu_Bold.ttf
+        - asset: assets/fonts/Ubuntu_BoldItalic.ttf
+          style: italic
+    - family: ubuntuMedium
+      fonts:
+        - asset: assets/fonts/Ubuntu_Medium.ttf
+        - asset: assets/fonts/Ubuntu_MediumItalic.ttf
+          style: italic
+    - family: ubuntuRegular
+      fonts:
+        - asset: assets/fonts/Ubuntu_Regular.ttf
+        - asset: assets/fonts/Ubuntu_RegularItalic.ttf
+          style: italic
+    - family: Helvetica
+      fonts:
+        - asset: assets/fonts/Helvetica.ttf
+    - family: PoppinsBlack
+      fonts:
+        - asset: assets/fonts/PoppinsBlack.ttf
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora.ttf
+        

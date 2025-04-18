@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # QrSecureShare
 This is the codebase for a flutter project for an app that generate qr code, ensure security of web links, and enable other sharing options
 
@@ -20,3 +21,8 @@ here are the colors that should work:
   - second proposition: [https://coolors.co/palette/336699-86bbd8-2f4858-9ee493-daf7dc];
   - third proposition: [https://coolors.co/palette/ff6b35-f7c59f-efefd0-004e89-1a659e];
   ```
+=======
+# secure_share
+
+A new Flutter project.
+>>>>>>> 010ca08 (Initial commit of the home pages, sign in, sign up, and action pages)
