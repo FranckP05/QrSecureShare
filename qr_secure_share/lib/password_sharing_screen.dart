@@ -3,6 +3,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_secure_share/database_helper.dart';
+import 'package:qr_secure_share/rsa_helper.dart';
 import 'package:intl/intl.dart';
 
 // Écran pour partager des mots de passe
@@ -57,7 +58,9 @@ class _PasswordSharingScreenState extends State<PasswordSharingScreen> {
   }
 
   // Affiche un QR code pour partager le mot de passe
-  void _showQrCodeDialog(String password) {
+  Future<void> _showQrCodeDialog(String password) async {
+    final dataToEncrypt = 'PASSWORD:$password';
+    final encryptedData = await RSAHelper.encryptData(dataToEncrypt);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -66,7 +69,7 @@ class _PasswordSharingScreenState extends State<PasswordSharingScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             QrImageView(
-              data: password,
+              data: encryptedData,
               version: QrVersions.auto,
               size: 200.0,
               backgroundColor: Colors.white,
@@ -183,7 +186,7 @@ class _PasswordSharingScreenState extends State<PasswordSharingScreen> {
 
                       // Sauvegarde le mot de passe et affiche le QR code
                       await _savePassword(password);
-                      _showQrCodeDialog(password);
+                      await _showQrCodeDialog(password);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

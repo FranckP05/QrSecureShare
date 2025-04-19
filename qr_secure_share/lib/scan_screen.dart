@@ -6,7 +6,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_secure_share/database_helper.dart';
+import 'package:qr_secure_share/rsa_helper.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 // Écran pour scanner ou afficher des QR codes
 class ScanScreen extends StatefulWidget {
@@ -74,20 +76,81 @@ class _ScanScreenState extends State<ScanScreen> {
         result = scanData;
       });
 
-      // Sauvegarde le lien scanné dans SQLite
       if (scanData.code != null) {
-        final sharedLink = SharedLink(
-          url: scanData.code!,
-          createdAt: DateTime.now().toIso8601String(),
-        );
-        await DatabaseHelper.instance.insertLink(sharedLink);
+        try {
+          // Déchiffre les données
+          final decryptedData = await RSAHelper.decryptData(scanData.code!);
+          final now = DateTime.now().toIso8601String();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lien scanné : ${scanData.code}'),
-            backgroundColor: const Color(0xFF4CAF50),
-          ),
-        );
+          // Traite les données déchiffrées
+          if (decryptedData.startsWith('LINK:')) {
+            final url = decryptedData.substring(5);
+            final sharedLink = SharedLink(url: url, createdAt: now);
+            await DatabaseHelper.instance.insertLink(sharedLink);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Lien scanné : $url'),
+                backgroundColor: const Color(0xFF4CAF50),
+              ),
+            );
+          } else if (decryptedData.startsWith('PASSWORD:')) {
+            final password = decryptedData.substring(9);
+            final sharedPassword =
+                SharedPassword(password: password, createdAt: now);
+            await DatabaseHelper.instance.insertPassword(sharedPassword);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Mot de passe scanné'),
+                backgroundColor: Color(0xFF4CAF50),
+              ),
+            );
+          } else if (decryptedData.startsWith('WIFI:')) {
+            final wifiString = decryptedData.substring(5);
+            final ssidMatch = RegExp(r'S:([^;]+);').firstMatch(wifiString);
+            final passwordMatch = RegExp(r'P:([^;]+);').firstMatch(wifiString);
+            if (ssidMatch != null && passwordMatch != null) {
+              final ssid = ssidMatch.group(1)!;
+              final password = passwordMatch.group(1)!;
+              final sharedWifi =
+                  SharedWifi(ssid: ssid, password: password, createdAt: now);
+              await DatabaseHelper.instance.insertWifi(sharedWifi);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Wi-Fi scanné : $ssid'),
+                  backgroundColor: const Color(0xFF4CAF50),
+                ),
+              );
+            }
+          } else if (decryptedData.startsWith('FILE:')) {
+            final filePath = decryptedData.substring(5);
+            final sharedFile = SharedFile(
+              path: filePath,
+              name: path.basename(filePath),
+              createdAt: now,
+            );
+            await DatabaseHelper.instance.insertFile(sharedFile);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Fichier scanné : ${sharedFile.name}'),
+                backgroundColor: const Color(0xFF4CAF50),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Type de données non reconnu'),
+                backgroundColor: Color(0xFFF44336),
+              ),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erreur lors du déchiffrement : $e'),
+              backgroundColor: const Color(0xFFF44336),
+            ),
+          );
+        }
       }
 
       // Pause la caméra après le scan
@@ -191,7 +254,8 @@ class _ScanScreenState extends State<ScanScreen> {
                               ClipboardData(text: result!.code!));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Lien copié : ${result!.code}'),
+                              content:
+                                  Text('Données copiées : ${result!.code}'),
                               backgroundColor: const Color(0xFF4CAF50),
                             ),
                           );

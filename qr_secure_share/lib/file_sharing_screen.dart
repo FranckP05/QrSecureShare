@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_secure_share/database_helper.dart';
 import 'package:qr_secure_share/file_preview_screen.dart';
 import 'package:qr_secure_share/file_history_screen.dart';
+import 'package:qr_secure_share/rsa_helper.dart';
 import 'package:path/path.dart' as path;
 
 // Écran pour partager des fichiers
@@ -15,7 +16,7 @@ class FileSharingScreen extends StatefulWidget {
   const FileSharingScreen({super.key, required this.onToggleTheme});
 
   @override
-  State<FileSharingScreen> createState() => _FileSharingScreenState();
+  _FileSharingScreenState createState() => _FileSharingScreenState();
 }
 
 class _FileSharingScreenState extends State<FileSharingScreen> {
@@ -36,14 +37,12 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
         });
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de la sélection du fichier : $e'),
-            backgroundColor: const Color(0xFFF44336),
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur lors de la sélection du fichier : $e'),
+          backgroundColor: const Color(0xFFF44336),
+        ),
+      );
     }
   }
 
@@ -58,7 +57,9 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
   }
 
   // Affiche un QR code pour partager le fichier
-  void _showQrCodeDialog(String filePath) {
+  Future<void> _showQrCodeDialog(String filePath) async {
+    final dataToEncrypt = 'FILE:$filePath';
+    final encryptedData = await RSAHelper.encryptData(dataToEncrypt);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -67,7 +68,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             QrImageView(
-              data: filePath,
+              data: encryptedData,
               version: QrVersions.auto,
               size: 200.0,
               backgroundColor: Colors.white,
@@ -137,7 +138,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                   children: [
                     ElevatedButton.icon(
                       onPressed: _pickFile,
-                      icon: const FaIcon(FontAwesomeIcons.fileArrowUp),
+                      icon: const FaIcon(FontAwesomeIcons.fileUpload),
                       label: const Text('Sélectionner un fichier',
                           style: TextStyle(fontSize: 16)),
                     ),
@@ -187,35 +188,28 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                               await _saveFileToHistory(_selectedFile!);
 
                               // Affiche le QR code avec le chemin du fichier
-                              _showQrCodeDialog(_selectedFile!.path);
+                              await _showQrCodeDialog(_selectedFile!.path);
 
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Fichier partagé : ${path.basename(_selectedFile!.path)}'),
-                                    backgroundColor: const Color(0xFF4CAF50),
-                                  ),
-                                );
-                              }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Fichier partagé : ${path.basename(_selectedFile!.path)}'),
+                                  backgroundColor: const Color(0xFF4CAF50),
+                                ),
+                              );
                             } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text('Erreur lors du partage : $e'),
-                                    backgroundColor: const Color(0xFFF44336),
-                                  ),
-                                );
-                              }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Erreur lors du partage : $e'),
+                                  backgroundColor: const Color(0xFFF44336),
+                                ),
+                              );
                             }
 
-                            if (mounted) {
-                              setState(() {
-                                _isLoading = false;
-                                _selectedFile = null;
-                              });
-                            }
+                            setState(() {
+                              _isLoading = false;
+                              _selectedFile = null;
+                            });
                           },
                     icon: const FaIcon(FontAwesomeIcons.share),
                     label:
@@ -230,7 +224,7 @@ class _FileSharingScreenState extends State<FileSharingScreen> {
                       builder: (context) => const FileHistoryScreen()),
                 );
               },
-              icon: const FaIcon(FontAwesomeIcons.clockRotateLeft),
+              icon: const FaIcon(FontAwesomeIcons.history),
               label: const Text('Voir l’historique',
                   style: TextStyle(fontSize: 16)),
             ),

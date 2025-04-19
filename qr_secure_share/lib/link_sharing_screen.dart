@@ -3,6 +3,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_secure_share/database_helper.dart';
+import 'package:qr_secure_share/rsa_helper.dart';
 import 'package:intl/intl.dart';
 
 // Écran pour partager des liens avec un historique persistant
@@ -71,7 +72,10 @@ class _LinkSharingScreenState extends State<LinkSharingScreen> {
   }
 
   // Affiche un QR code pour partager le lien
-  void _showQrCodeDialog(String url) {
+  Future<void> _showQrCodeDialog(String url) async {
+    // Ajoute le préfixe et chiffre les données
+    final dataToEncrypt = 'LINK:$url';
+    final encryptedData = await RSAHelper.encryptData(dataToEncrypt);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -80,7 +84,7 @@ class _LinkSharingScreenState extends State<LinkSharingScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             QrImageView(
-              data: url,
+              data: encryptedData,
               version: QrVersions.auto,
               size: 200.0,
               backgroundColor: Colors.white,
@@ -206,7 +210,7 @@ class _LinkSharingScreenState extends State<LinkSharingScreen> {
 
                       // Sauvegarde le lien et affiche le QR code
                       await _saveLink(url);
-                      _showQrCodeDialog(url);
+                      await _showQrCodeDialog(url);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

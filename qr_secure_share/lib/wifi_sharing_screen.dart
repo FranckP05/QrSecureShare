@@ -3,6 +3,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_secure_share/database_helper.dart';
+import 'package:qr_secure_share/rsa_helper.dart';
 import 'package:intl/intl.dart';
 
 // Écran pour partager des identifiants Wi-Fi
@@ -64,7 +65,9 @@ class _WifiSharingScreenState extends State<WifiSharingScreen> {
   }
 
   // Affiche un QR code pour partager l'identifiant Wi-Fi
-  void _showQrCodeDialog(String wifiString) {
+  Future<void> _showQrCodeDialog(String wifiString) async {
+    final dataToEncrypt = 'WIFI:$wifiString';
+    final encryptedData = await RSAHelper.encryptData(dataToEncrypt);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -73,7 +76,7 @@ class _WifiSharingScreenState extends State<WifiSharingScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             QrImageView(
-              data: wifiString,
+              data: encryptedData,
               version: QrVersions.auto,
               size: 200.0,
               backgroundColor: Colors.white,
@@ -211,7 +214,7 @@ class _WifiSharingScreenState extends State<WifiSharingScreen> {
                       // Sauvegarde l'identifiant Wi-Fi et affiche le QR code
                       final wifiString = _generateWifiString(ssid, password);
                       await _saveWifi(ssid, password);
-                      _showQrCodeDialog(wifiString);
+                      await _showQrCodeDialog(wifiString);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
