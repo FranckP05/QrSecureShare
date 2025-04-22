@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:secure_share/link_reception_screen.dart';
 import 'package:secure_share/widgets/gradient_button.dart';
 import '../widgets/theme_toggle_button.dart';
 
@@ -10,16 +11,14 @@ class ReceivePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [ThemeToggleButton(toggleTheme: toggleTheme)],
-        backgroundColor:
-            Theme.of(context).brightness == Brightness.light
-                ? const Color(0xFFEDF2FF)
-                : Colors.black,
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? const Color(0xFFEDF2FF)
+            : Colors.black,
         toolbarHeight: 40,
       ),
-      backgroundColor:
-          Theme.of(context).brightness == Brightness.light
-              ? const Color(0xFFEDF2FF)
-              : Colors.black,
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? const Color(0xFFEDF2FF)
+          : Colors.black,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
@@ -39,11 +38,18 @@ class ReceivePage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
                 child: Column(
                   children: [
                     GradientButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LinkReceptionScreen(
+                                    onToggleTheme: toggleTheme)));
+                      },
                       svgPath: 'assets/icons/receive_link.svg',
                       svgWidth: 35,
                       text: 'Recevoir un lien',
@@ -57,7 +63,7 @@ class ReceivePage extends StatelessWidget {
                       svgWidth: 40,
                       text: 'Recevoir un mot \nde passe',
                       lightColors: const [Color(0xFF0968e5), Color(0xFF091970)],
-                      darkColors: const [ Color(0xFF2178dd), Color(0xFF141C86)],
+                      darkColors: const [Color(0xFF2178dd), Color(0xFF141C86)],
                     ),
                     const SizedBox(height: 12),
                     GradientButton(
@@ -78,7 +84,6 @@ class ReceivePage extends StatelessWidget {
                       lightColors: const [Color(0xFF0968e5), Color(0xFF091970)],
                       darkColors: const [Color(0xFF2178dd), Color(0xFF141C86)],
                     ),
-
                   ],
                 ),
               ),

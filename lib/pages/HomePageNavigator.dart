@@ -5,8 +5,9 @@ import 'package:secure_share/pages/home.dart';
 
 class HomeNavigator extends StatefulWidget {
   final VoidCallback toggleTheme;
-
-  const HomeNavigator({super.key, required this.toggleTheme});
+  final String username;
+  const HomeNavigator(
+      {super.key, required this.toggleTheme, required this.username});
 
   @override
   _HomeNavigatorState createState() => _HomeNavigatorState();
@@ -43,7 +44,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             : Colors.black,
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
             child: GNav(
               selectedIndex: _selectedIndex,
               onTabChange: (index) {
@@ -58,7 +60,9 @@ class _HomeNavigatorState extends State<HomeNavigator> {
               },
               gap: 8,
               backgroundColor: Colors.transparent,
-              activeColor: Theme.of(context).brightness==Brightness.light? Color(0xFF0096c7): Color(0xFFf96900),
+              activeColor: Theme.of(context).brightness == Brightness.light
+                  ? Color(0xFF0096c7)
+                  : Color(0xFFf96900),
               tabBackgroundColor: Colors.transparent,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               tabBorderRadius: 50, // Pill-shaped per pub.dev
@@ -69,7 +73,9 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Sora',
-                color: Theme.of(context).brightness==Brightness.light? Color(0xFF0096c7): Color(0xFFf96900),
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Color(0xFF0096c7)
+                    : Color(0xFFf96900),
               ),
               iconSize: 24,
               duration: const Duration(milliseconds: 400),

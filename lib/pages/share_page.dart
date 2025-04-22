@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:secure_share/file_sharing_screen.dart';
+import 'package:secure_share/link_sharing_screen.dart';
+import 'package:secure_share/password_sharing_screen.dart';
 import 'package:secure_share/widgets/gradient_button.dart';
+import 'package:secure_share/wifi_sharing_screen.dart';
 import '../widgets/theme_toggle_button.dart';
 
 class SharePage extends StatelessWidget {
@@ -11,16 +15,14 @@ class SharePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [ThemeToggleButton(toggleTheme: toggleTheme)],
-        backgroundColor:
-            Theme.of(context).brightness == Brightness.light
-                ? const Color(0xFFEDF2FF)
-                : Colors.black,
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? const Color(0xFFEDF2FF)
+            : Colors.black,
         toolbarHeight: 40,
       ),
-      backgroundColor:
-          Theme.of(context).brightness == Brightness.light
-              ? const Color(0xFFEDF2FF)
-              : Colors.black,
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? const Color(0xFFEDF2FF)
+          : Colors.black,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
@@ -35,17 +37,23 @@ class SharePage extends StatelessWidget {
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
                     fontFamily: 'Sora',
-                    
                   ),
                 ),
               ),
               const SizedBox(height: 24),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
                 child: Column(
                   children: [
                     GradientButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LinkSharingScreen(
+                                    onToggleTheme: toggleTheme)));
+                      },
                       svgPath: 'assets/icons/share_bold.svg',
                       svgWidth: 35,
                       svgColor: Colors.white,
@@ -55,7 +63,13 @@ class SharePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     GradientButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PasswordSharingScreen(
+                                    onToggleTheme: toggleTheme)));
+                      },
                       svgPath: 'assets/icons/share_square.svg',
                       svgColor: Colors.white,
                       svgWidth: 30,
@@ -65,7 +79,13 @@ class SharePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     GradientButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WifiSharingScreen(
+                                    onToggleTheme: toggleTheme)));
+                      },
                       svgPath: 'assets/icons/share_wifi.svg',
                       svgWidth: 30,
                       svgColor: Colors.white,
@@ -75,7 +95,13 @@ class SharePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     GradientButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FileSharingScreen(
+                                    onToggleTheme: toggleTheme)));
+                      },
                       svgPath: 'assets/icons/share_file.svg',
                       svgWidth: 30,
                       svgColor: Colors.white,
@@ -83,7 +109,6 @@ class SharePage extends StatelessWidget {
                       lightColors: const [Color(0xFF0968e5), Color(0xFF091970)],
                       darkColors: const [Color(0xFF2178dd), Color(0xFF141C86)],
                     ),
-
                   ],
                 ),
               ),
